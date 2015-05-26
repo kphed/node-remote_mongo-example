@@ -1,19 +1,19 @@
 /**
  * webserver-db-app.js
- * 
+ *
  * @version 1.0
- * 
+ *
  * DESCRIPTION:
- * a "HELLO WORLD" server-side application to demonstrate running a node 
+ * a "HELLO WORLD" server-side application to demonstrate running a node
  * Webserver and a mongo DB on separate instances on AWS EC2.
- * Uses the Express and Mongoose node packages. 
- * 
- * 
+ * Uses the Express and Mongoose node packages.
+ *
+ *
  * @throws none
  * @see nodejs.org
  * @see express.org
  * @see mongoosejs.com
- * 
+ *
  * @author Ceeb
  * (C) 2013 Fatkahawai
  */
@@ -27,9 +27,9 @@ var app       = express();
 var config = {
       "USER"     : "",                  // if your database has user/pwd defined
       "PASS"     : "",
-      "HOST"     : "ec2-54-252-31-96.ap-southeast-2.compute.amazonaws.com",  // the domain name of our MongoDB EC2 instance
+      "HOST"     : "ec2-52-25-180-70.us-west-2.compute.amazonaws.com",  // the domain name of our MongoDB EC2 instance
       "PORT"     : "27017",             // this is the default port mongoDB is listening for incoming queries
-      "DATABASE" : "my_example"         // the name of your database on that instance
+      "DATABASE" : "gregariousToaster"         // the name of your database on that instance
     };
 
 var dbPath  = "mongodb://" + config.USER + ":" +
@@ -59,7 +59,7 @@ console.log('\nattempting to connect to remote MongoDB instance on another EC2 s
 
 if ( !(db = mongoose.connect(dbPath)) )
   console.log('Unable to connect to MongoDB at '+dbPath);
-else 
+else
   console.log('connecting to MongoDB at '+dbPath);
 
 // connection failed event handler
@@ -71,15 +71,13 @@ mongoose.connection.on('error', function(err){
 // check if the Db already contains a greeting. if not, create one and save it to the Db
 mongoose.connection.once('open', function() {
   var greeting;
-  
+
   console.log('database '+config.DATABASE+' is now open on '+config.HOST );
-  
+
   // search if a greeting has already been saved in our db
   Greeting.find( function(err, greetings){
     if( !err && greetings ){ // at least one greeting record already exists in our db. we can use that
-      console.log(greetings.length+' greetings already exist in DB' );
-    }
-    else { // no records found
+ // no records found
       console.log('no greetings in DB yet, creating one' );
 
       greeting = new Greeting({ sentence: standardGreeting });
@@ -99,7 +97,7 @@ mongoose.connection.once('open', function() {
     } // if no records
   }); // Greeting.find()
 
-  
+
 }); // mongoose.connection.once()
 
 // ------------------------------------------------------------------------
@@ -112,7 +110,7 @@ app.get('/', function(req, res){
   console.log('received client request');
   if( !Greeting )
     console.log('Database not ready');
-  
+
   // look up all greetings in our DB
   Greeting.find(function (err, greetings) {
     if (err) {
@@ -122,7 +120,7 @@ app.get('/', function(req, res){
     else {
       if(greetings){
         console.log('found '+greetings.length+' greetings in DB');
-        // send newest greeting 
+        // send newest greeting
         responseText = greetings[0].sentence;
       }
       console.log('sending greeting to client: '+responseText);
